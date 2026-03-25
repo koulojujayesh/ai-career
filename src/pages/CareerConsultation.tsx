@@ -4,6 +4,9 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import SiteFooter from "@/components/layout/SiteFooter";
+import SiteNavbar from "@/components/layout/SiteNavbar";
+import { useScrollReveal } from "@/hooks/use-scroll-reveal";
 import { Send, Bot, User, ArrowRight, TrendingUp, Target } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
@@ -15,6 +18,7 @@ interface Message {
 }
 
 const CareerConsultation = () => {
+  useScrollReveal();
   const [messages, setMessages] = useState<Message[]>([
     {
       id: 1,
@@ -68,19 +72,21 @@ const CareerConsultation = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      <SiteNavbar />
+
       {/* Header */}
-      <div className="border-b border-border/50 bg-glass backdrop-blur-sm">
+      <div className="section-white border-b border-border/50 bg-glass backdrop-blur-sm">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-2xl font-bold bg-gradient-primary bg-clip-text text-transparent">
+              <h1 className="font-display text-2xl font-bold text-[var(--primary)]">
                 AI Career Consultation
               </h1>
               <p className="text-muted-foreground">Discover your ideal career path with AI guidance</p>
             </div>
-            <Button 
+            <Button
               onClick={() => navigate("/roadmap")}
-              className="bg-gradient-primary hover:opacity-90"
+              className="bg-[var(--primary)] hover:bg-[var(--primary-light)]"
             >
               Generate Roadmap
               <ArrowRight className="ml-2 h-4 w-4" />
@@ -141,21 +147,19 @@ const CareerConsultation = () => {
                 {messages.map((message) => (
                   <div
                     key={message.id}
-                    className={`flex items-start gap-3 ${
-                      message.sender === "user" ? "flex-row-reverse" : ""
-                    }`}
+                    className={`flex items-start gap-3 ${message.sender === "user" ? "flex-row-reverse" : ""
+                      }`}
                   >
                     <Avatar className="h-8 w-8">
-                      <AvatarFallback className={message.sender === "ai" ? "bg-primary" : "bg-secondary"}>
+                      <AvatarFallback className={message.sender === "ai" ? "bg-primary text-white" : "bg-secondary text-[var(--text-dark)]"}>
                         {message.sender === "ai" ? <Bot className="h-4 w-4" /> : <User className="h-4 w-4" />}
                       </AvatarFallback>
                     </Avatar>
                     <div
-                      className={`max-w-[80%] rounded-lg p-3 ${
-                        message.sender === "user"
+                      className={`max-w-[80%] rounded-lg p-3 ${message.sender === "user"
                           ? "bg-primary text-primary-foreground ml-auto"
                           : "bg-muted"
-                      }`}
+                        }`}
                     >
                       <p className="text-sm">{message.text}</p>
                       <span className="text-xs opacity-70 mt-1 block">
@@ -166,7 +170,7 @@ const CareerConsultation = () => {
                 ))}
               </div>
             </ScrollArea>
-            
+
             <div className="border-t border-border/50 p-4">
               <div className="flex gap-2">
                 <Input
@@ -176,10 +180,10 @@ const CareerConsultation = () => {
                   placeholder="Ask about career paths, skills, or market trends..."
                   className="flex-1"
                 />
-                <Button 
+                <Button
                   onClick={sendMessage}
                   disabled={!inputMessage.trim()}
-                  className="bg-gradient-primary hover:opacity-90"
+                  className="bg-[var(--primary)] hover:bg-[var(--primary-light)]"
                 >
                   <Send className="h-4 w-4" />
                 </Button>
@@ -188,6 +192,8 @@ const CareerConsultation = () => {
           </CardContent>
         </Card>
       </div>
+
+      <SiteFooter />
     </div>
   );
 };

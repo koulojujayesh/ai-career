@@ -5,6 +5,9 @@ import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
+import SiteFooter from "@/components/layout/SiteFooter";
+import SiteNavbar from "@/components/layout/SiteNavbar";
+import { useScrollReveal } from "@/hooks/use-scroll-reveal";
 import { Send, Bot, User, Lightbulb, BookOpen, Target, Zap } from "lucide-react";
 
 interface Message {
@@ -16,6 +19,7 @@ interface Message {
 }
 
 const AITutorChat = () => {
+  useScrollReveal();
   const [messages, setMessages] = useState<Message[]>([
     {
       id: 1,
@@ -104,7 +108,7 @@ const AITutorChat = () => {
   const getMessageTypeColor = (type?: Message["type"]) => {
     switch (type) {
       case "concept": return "bg-primary/10 border-l-4 border-l-primary";
-      case "motivation": return "bg-secondary/10 border-l-4 border-l-secondary";
+      case "motivation": return "bg-[var(--primary-light)]/30 border-l-4 border-l-[var(--primary)]";
       case "resource": return "bg-accent/10 border-l-4 border-l-accent";
       default: return "";
     }
@@ -121,18 +125,20 @@ const AITutorChat = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      <SiteNavbar />
+
       {/* Header */}
-      <div className="border-b border-border/50 bg-glass backdrop-blur-sm">
+      <div className="section-white border-b border-border/50 bg-glass backdrop-blur-sm">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-2xl font-bold bg-gradient-primary bg-clip-text text-transparent">
+              <h1 className="font-display text-2xl font-bold text-[var(--primary)]">
                 AI Learning Tutor
               </h1>
               <p className="text-muted-foreground">Your personal learning companion</p>
             </div>
             <div className="flex items-center gap-2">
-              <Badge variant="outline" className="bg-green-500/20 text-green-400 border-green-500/30">
+              <Badge variant="outline" className="bg-primary/15 text-primary border-primary/30">
                 Online
               </Badge>
             </div>
@@ -180,21 +186,19 @@ const AITutorChat = () => {
                     {messages.map((message) => (
                       <div
                         key={message.id}
-                        className={`flex items-start gap-3 ${
-                          message.sender === "user" ? "flex-row-reverse" : ""
-                        }`}
+                        className={`flex items-start gap-3 ${message.sender === "user" ? "flex-row-reverse" : ""
+                          }`}
                       >
                         <Avatar className="h-10 w-10 flex-shrink-0">
-                          <AvatarFallback className={message.sender === "ai" ? "bg-primary/20" : "bg-secondary/20"}>
+                          <AvatarFallback className={message.sender === "ai" ? "bg-primary/20 text-primary" : "bg-[var(--primary-light)]/40 text-[var(--text-dark)]"}>
                             {message.sender === "ai" ? <Bot className="h-5 w-5" /> : <User className="h-5 w-5" />}
                           </AvatarFallback>
                         </Avatar>
                         <div
-                          className={`max-w-[85%] rounded-lg p-4 ${
-                            message.sender === "user"
+                          className={`max-w-[85%] rounded-lg p-4 ${message.sender === "user"
                               ? "bg-primary text-primary-foreground ml-auto"
                               : `bg-card/80 ${getMessageTypeColor(message.type)}`
-                          }`}
+                            }`}
                         >
                           {message.sender === "ai" && message.type && (
                             <div className="flex items-center gap-2 mb-2 opacity-70">
@@ -213,7 +217,7 @@ const AITutorChat = () => {
                     ))}
                   </div>
                 </ScrollArea>
-                
+
                 <div className="border-t border-border/50 p-4">
                   <div className="flex gap-2">
                     <Input
@@ -223,10 +227,10 @@ const AITutorChat = () => {
                       placeholder="Ask about concepts, get motivation, or request resources..."
                       className="flex-1"
                     />
-                    <Button 
+                    <Button
                       onClick={() => sendMessage()}
                       disabled={!inputMessage.trim()}
-                      className="bg-gradient-primary hover:opacity-90"
+                      className="bg-[var(--primary)] hover:bg-[var(--primary-light)]"
                     >
                       <Send className="h-4 w-4" />
                     </Button>
@@ -240,6 +244,8 @@ const AITutorChat = () => {
           </div>
         </div>
       </div>
+
+      <SiteFooter />
     </div>
   );
 };

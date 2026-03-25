@@ -1,0 +1,805 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CareerPath AI - Login & Sign Up</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --primary: #6B9AB8;
+      --primary-dark: #4a7a9b;
+      --cream: #F2E4D4;
+      --taupe: #D2C4B4;
+      --heading: #2C3E50;
+      --text: #4A5568;
+      --placeholder: #A0AEC0;
+      --success: #2f9e44;
+      --error: #d64545;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      font-family: "DM Sans", sans-serif;
+      background: var(--cream);
+      color: var(--text);
+    }
+
+    .auth-page {
+      width: 100%;
+      max-width: 420px;
+    }
+
+    .auth-card {
+      width: 100%;
+      background: #FFFFFF;
+      border: 1px solid var(--taupe);
+      border-radius: 16px;
+      box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+      padding: 40px 36px;
+      animation: card-in 0.4s ease;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      margin-bottom: 8px;
+      color: var(--primary);
+      font-weight: 700;
+      font-size: 1.15rem;
+    }
+
+    .brand-mark {
+      width: 26px;
+      height: 26px;
+      border-radius: 8px;
+      background: rgba(107, 154, 184, 0.14);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    h1 {
+      color: var(--heading);
+      font-size: 1.6rem;
+      font-weight: 700;
+      text-align: center;
+      margin-bottom: 4px;
+    }
+
+    .subheading {
+      text-align: center;
+      color: var(--text);
+      font-size: 0.95rem;
+      margin-bottom: 28px;
+    }
+
+    .tabs {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      background: #F9F7F5;
+      border: 1px solid var(--taupe);
+      border-radius: 10px;
+      padding: 4px;
+      margin-bottom: 20px;
+    }
+
+    .tab {
+      border: none;
+      border-radius: 8px;
+      padding: 10px;
+      background: transparent;
+      color: var(--text);
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .tab.active {
+      background: #FFFFFF;
+      color: var(--primary);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    }
+
+    .auth-form {
+      display: none;
+    }
+
+    .auth-form.active {
+      display: block;
+    }
+
+    .field-group {
+      margin-bottom: 16px;
+    }
+
+    .field-group label {
+      display: block;
+      color: var(--text);
+      font-size: 0.875rem;
+      font-weight: 500;
+      margin-bottom: 6px;
+    }
+
+    .input-wrap {
+      position: relative;
+    }
+
+    .checkmark {
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--success);
+      font-size: 0.9rem;
+      opacity: 0;
+      transition: opacity 0.2s ease;
+      pointer-events: none;
+    }
+
+    .input-wrap.valid .checkmark {
+      opacity: 1;
+    }
+
+    input,
+    select {
+      width: 100%;
+      padding: 12px 16px;
+      border: 1.5px solid var(--taupe);
+      border-radius: 8px;
+      background: #FFFFFF;
+      color: var(--heading);
+      font-size: 0.95rem;
+      font-family: "DM Sans", sans-serif;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    input::placeholder {
+      color: var(--placeholder);
+    }
+
+    input:focus,
+    select:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(107, 154, 184, 0.15);
+      outline: none;
+    }
+
+    .is-valid {
+      border-color: var(--success) !important;
+    }
+
+    .is-invalid {
+      border-color: var(--error) !important;
+    }
+
+    .error {
+      display: none;
+      margin-top: 6px;
+      color: var(--error);
+      font-size: 0.78rem;
+    }
+
+    .error.show {
+      display: block;
+    }
+
+    .row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+
+    .remember {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.875rem;
+      color: var(--text);
+    }
+
+    .remember input {
+      width: 16px;
+      height: 16px;
+      accent-color: var(--primary);
+      padding: 0;
+    }
+
+    .forgot-link,
+    .switch-link a,
+    .back-link {
+      color: var(--primary);
+      text-decoration: none;
+      cursor: pointer;
+      font-size: 0.85rem;
+    }
+
+    .forgot-link:hover,
+    .switch-link a:hover,
+    .back-link:hover {
+      color: var(--primary-dark);
+      text-decoration: underline;
+    }
+
+    .btn-primary,
+    .btn-social,
+    .btn-secondary {
+      width: 100%;
+      border-radius: 8px;
+      font-family: "DM Sans", sans-serif;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .btn-primary {
+      border: none;
+      background: var(--primary);
+      color: #FFFFFF;
+      padding: 13px;
+      margin-top: 4px;
+    }
+
+    .btn-primary:hover {
+      background: var(--primary-dark);
+      transform: scale(1.02);
+    }
+
+    .divider {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin: 18px 0 14px;
+    }
+
+    .divider-line {
+      flex: 1;
+      border-top: 1px solid var(--taupe);
+    }
+
+    .divider span {
+      color: var(--placeholder);
+      font-size: 0.85rem;
+    }
+
+    .social-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+
+    .btn-social {
+      background: #FFFFFF;
+      border: 1.5px solid var(--taupe);
+      color: var(--heading);
+      padding: 11px;
+    }
+
+    .btn-social:hover {
+      background: #F9F7F5;
+      border-color: var(--primary);
+    }
+
+    .btn-secondary {
+      border: 1.5px solid var(--primary);
+      background: transparent;
+      color: var(--primary);
+      padding: 11px;
+    }
+
+    .btn-secondary:hover {
+      background: rgba(107, 154, 184, 0.08);
+    }
+
+    .switch-link {
+      text-align: center;
+      color: var(--text);
+      font-size: 0.9rem;
+      margin-top: 2px;
+    }
+
+    .shake {
+      animation: shake 0.4s ease;
+    }
+
+    .toast {
+      position: fixed;
+      right: 20px;
+      bottom: 20px;
+      background: #FFFFFF;
+      border: 1px solid var(--taupe);
+      border-left: 4px solid var(--primary);
+      border-radius: 10px;
+      padding: 12px 14px;
+      color: var(--heading);
+      font-size: 0.9rem;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+      animation: fade-up 0.2s ease;
+      z-index: 9999;
+    }
+
+    @keyframes card-in {
+      from {
+        opacity: 0;
+        transform: scale(0.97);
+      }
+      to {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+
+    @keyframes shake {
+      0%,
+      100% {
+        transform: translateX(0);
+      }
+      20%,
+      60% {
+        transform: translateX(-6px);
+      }
+      40%,
+      80% {
+        transform: translateX(6px);
+      }
+    }
+
+    @keyframes fade-up {
+      from {
+        opacity: 0;
+        transform: translateY(8px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @media (max-width: 480px) {
+      body {
+        padding: 14px;
+      }
+
+      .auth-card {
+        padding: 30px 22px;
+      }
+
+      .social-row {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="auth-page">
+    <section id="authCard" class="auth-card">
+      <div class="brand">
+        <span class="brand-mark">CP</span>
+        <span>CareerPath AI</span>
+      </div>
+
+      <h1 id="titleText">Welcome Back</h1>
+      <p id="subtitleText" class="subheading">Sign in to continue your learning journey.</p>
+
+      <div class="tabs">
+        <button id="tabLogin" class="tab active" onclick="switchForm('login', event)">Login</button>
+        <button id="tabSignup" class="tab" onclick="switchForm('signup', event)">Sign Up</button>
+      </div>
+
+      <form id="loginForm" class="auth-form active" onsubmit="handleLogin(event)">
+        <div class="field-group">
+          <label for="loginEmail">Email Address</label>
+          <div class="input-wrap" id="wrapLoginEmail">
+            <input type="email" id="loginEmail" placeholder="Enter your email" required />
+            <span class="checkmark">✓</span>
+          </div>
+          <div id="loginEmailErr" class="error"></div>
+        </div>
+
+        <div class="field-group">
+          <label for="loginPassword">Password</label>
+          <div class="input-wrap" id="wrapLoginPassword">
+            <input type="password" id="loginPassword" placeholder="Enter your password" required />
+            <span class="checkmark">✓</span>
+          </div>
+          <div id="loginPasswordErr" class="error"></div>
+        </div>
+
+        <div class="row">
+          <label class="remember" for="rememberMe"><input type="checkbox" id="rememberMe" />Remember me</label>
+          <a class="forgot-link" onclick="switchForm('forgot', event)">Forgot password?</a>
+        </div>
+
+        <button type="submit" class="btn-primary">Sign In</button>
+
+        <div class="divider">
+          <div class="divider-line"></div>
+          <span>or continue with</span>
+          <div class="divider-line"></div>
+        </div>
+
+        <div class="social-row">
+          <button type="button" class="btn-social">Google</button>
+          <button type="button" class="btn-social">GitHub</button>
+        </div>
+
+        <p class="switch-link">Don't have an account? <a onclick="switchForm('signup', event)">Sign up</a></p>
+      </form>
+
+      <form id="signupForm" class="auth-form" onsubmit="handleSignup(event)">
+        <div class="field-group">
+          <label for="signupName">Full Name</label>
+          <div class="input-wrap" id="wrapSignupName">
+            <input type="text" id="signupName" placeholder="Enter your full name" required />
+            <span class="checkmark">✓</span>
+          </div>
+          <div id="signupNameErr" class="error"></div>
+        </div>
+
+        <div class="field-group">
+          <label for="signupEmail">Email Address</label>
+          <div class="input-wrap" id="wrapSignupEmail">
+            <input type="email" id="signupEmail" placeholder="Enter your email" required />
+            <span class="checkmark">✓</span>
+          </div>
+          <div id="signupEmailErr" class="error"></div>
+        </div>
+
+        <div class="field-group">
+          <label for="signupPassword">Password</label>
+          <div class="input-wrap" id="wrapSignupPassword">
+            <input type="password" id="signupPassword" placeholder="Create a strong password" required />
+            <span class="checkmark">✓</span>
+          </div>
+          <div id="signupPasswordErr" class="error"></div>
+        </div>
+
+        <div class="field-group">
+          <label for="signupContact">Contact Number</label>
+          <div class="input-wrap" id="wrapSignupContact">
+            <input type="tel" id="signupContact" placeholder="10-digit phone number" required />
+            <span class="checkmark">✓</span>
+          </div>
+          <div id="signupContactErr" class="error"></div>
+        </div>
+
+        <div class="field-group">
+          <label for="signupYear">Year of Study</label>
+          <select id="signupYear" required>
+            <option value="">Select year</option>
+            <option value="1st">1st Year</option>
+            <option value="2nd">2nd Year</option>
+            <option value="3rd">3rd Year</option>
+            <option value="4th">4th Year</option>
+            <option value="graduated">Graduated</option>
+          </select>
+          <div id="signupYearErr" class="error"></div>
+        </div>
+
+        <div class="field-group">
+          <label for="signupBranch">Branch</label>
+          <select id="signupBranch" required>
+            <option value="">Select branch</option>
+            <option value="cse">Computer Science</option>
+            <option value="ece">Electronics</option>
+            <option value="me">Mechanical</option>
+            <option value="ce">Civil</option>
+            <option value="other">Other</option>
+          </select>
+          <div id="signupBranchErr" class="error"></div>
+        </div>
+
+        <button type="submit" class="btn-primary">Create Account</button>
+
+        <div class="divider">
+          <div class="divider-line"></div>
+          <span>or continue with</span>
+          <div class="divider-line"></div>
+        </div>
+
+        <div class="social-row">
+          <button type="button" class="btn-social">Google</button>
+          <button type="button" class="btn-social">GitHub</button>
+        </div>
+
+        <p class="switch-link">Already have an account? <a onclick="switchForm('login', event)">Sign in</a></p>
+      </form>
+
+      <form id="forgotForm" class="auth-form" onsubmit="handleForgotPassword(event)">
+        <div class="field-group">
+          <label for="forgotEmail">Email Address</label>
+          <div class="input-wrap" id="wrapForgotEmail">
+            <input type="email" id="forgotEmail" placeholder="Enter your registered email" required />
+            <span class="checkmark">✓</span>
+          </div>
+          <div id="forgotEmailErr" class="error"></div>
+        </div>
+
+        <p class="subheading" style="text-align:left;margin-bottom:16px;">We'll send a reset link to your email.</p>
+
+        <button type="submit" class="btn-primary">Send Reset Link</button>
+        <button type="button" class="btn-secondary" style="margin-top:10px;" onclick="switchForm('login', event)">Back to Login</button>
+      </form>
+    </section>
+  </main>
+
+  <script>
+    function initStorage() {
+      if (!localStorage.getItem("users")) {
+        localStorage.setItem("users", JSON.stringify([]));
+      }
+    }
+    initStorage();
+
+    function setHeader(form) {
+      const title = document.getElementById("titleText");
+      const subtitle = document.getElementById("subtitleText");
+      if (form === "signup") {
+        title.textContent = "Create Account";
+        subtitle.textContent = "Start building your personalized career path.";
+      } else if (form === "forgot") {
+        title.textContent = "Reset Password";
+        subtitle.textContent = "Enter your email to receive a reset link.";
+      } else {
+        title.textContent = "Welcome Back";
+        subtitle.textContent = "Sign in to continue your learning journey.";
+      }
+    }
+
+    function switchForm(formName, event) {
+      if (event) event.preventDefault();
+      document.querySelectorAll(".auth-form").forEach((form) => form.classList.remove("active"));
+      document.getElementById(formName + "Form").classList.add("active");
+
+      document.getElementById("tabLogin").classList.toggle("active", formName === "login");
+      document.getElementById("tabSignup").classList.toggle("active", formName === "signup");
+
+      clearAllErrors();
+      setHeader(formName);
+    }
+
+    function showError(elementId, message) {
+      const elem = document.getElementById(elementId);
+      if (!elem) return;
+      elem.textContent = message;
+      elem.classList.add("show");
+    }
+
+    function clearAllErrors() {
+      document.querySelectorAll(".error").forEach((el) => {
+        el.textContent = "";
+        el.classList.remove("show");
+      });
+      document.querySelectorAll(".is-invalid").forEach((el) => el.classList.remove("is-invalid"));
+    }
+
+    function markValid(inputId, wrapId, valid) {
+      const input = document.getElementById(inputId);
+      const wrap = document.getElementById(wrapId);
+      if (!input || !wrap) return;
+      input.classList.toggle("is-valid", valid);
+      wrap.classList.toggle("valid", valid);
+    }
+
+    function markInvalid(inputId) {
+      const input = document.getElementById(inputId);
+      if (!input) return;
+      input.classList.add("is-invalid");
+      input.classList.remove("is-valid");
+    }
+
+    function shakeCard() {
+      const card = document.getElementById("authCard");
+      card.classList.remove("shake");
+      requestAnimationFrame(() => card.classList.add("shake"));
+      setTimeout(() => card.classList.remove("shake"), 450);
+    }
+
+    function showToast(message) {
+      const toast = document.createElement("div");
+      toast.className = "toast";
+      toast.textContent = message;
+      document.body.appendChild(toast);
+      setTimeout(() => toast.remove(), 3000);
+    }
+
+    function findUserByEmail(email) {
+      const users = JSON.parse(localStorage.getItem("users") || "[]");
+      return users.find((u) => u.email.toLowerCase() === email.toLowerCase());
+    }
+
+    function handleLogin(event) {
+      event.preventDefault();
+      clearAllErrors();
+
+      const email = document.getElementById("loginEmail").value.trim().toLowerCase();
+      const password = document.getElementById("loginPassword").value;
+
+      let valid = true;
+
+      if (!email) {
+        showError("loginEmailErr", "Email is required");
+        markInvalid("loginEmail");
+        valid = false;
+      } else {
+        markValid("loginEmail", "wrapLoginEmail", true);
+      }
+
+      if (!password) {
+        showError("loginPasswordErr", "Password is required");
+        markInvalid("loginPassword");
+        valid = false;
+      } else {
+        markValid("loginPassword", "wrapLoginPassword", true);
+      }
+
+      if (!valid) {
+        shakeCard();
+        return;
+      }
+
+      const user = findUserByEmail(email);
+      if (!user) {
+        showError("loginEmailErr", "No account found");
+        markInvalid("loginEmail");
+        shakeCard();
+        return;
+      }
+
+      if (user.password !== password) {
+        showError("loginPasswordErr", "Incorrect password");
+        markInvalid("loginPassword");
+        shakeCard();
+        return;
+      }
+
+      localStorage.setItem("currentUser", JSON.stringify(user));
+      if (document.getElementById("rememberMe").checked) {
+        localStorage.setItem("rememberMe", email);
+      }
+
+      showToast("Signed in successfully.");
+      setTimeout(() => {
+        window.location.href = "/";
+      }, 700);
+    }
+
+    function handleSignup(event) {
+      event.preventDefault();
+      clearAllErrors();
+
+      const name = document.getElementById("signupName").value.trim();
+      const email = document.getElementById("signupEmail").value.trim().toLowerCase();
+      const password = document.getElementById("signupPassword").value;
+      const contact = document.getElementById("signupContact").value.trim();
+      const year = document.getElementById("signupYear").value;
+      const branch = document.getElementById("signupBranch").value;
+
+      let valid = true;
+
+      if (!name || name.length < 2) {
+        showError("signupNameErr", "Please enter a valid name");
+        markInvalid("signupName");
+        valid = false;
+      } else {
+        markValid("signupName", "wrapSignupName", true);
+      }
+
+      if (!email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) {
+        showError("signupEmailErr", "Please enter a valid email");
+        markInvalid("signupEmail");
+        valid = false;
+      } else if (findUserByEmail(email)) {
+        showError("signupEmailErr", "Email already registered");
+        markInvalid("signupEmail");
+        valid = false;
+      } else {
+        markValid("signupEmail", "wrapSignupEmail", true);
+      }
+
+      if (password.length < 8) {
+        showError("signupPasswordErr", "Password must be at least 8 characters");
+        markInvalid("signupPassword");
+        valid = false;
+      } else {
+        markValid("signupPassword", "wrapSignupPassword", true);
+      }
+
+      if (!contact.match(/^\d{10}$/)) {
+        showError("signupContactErr", "Please enter a valid 10-digit number");
+        markInvalid("signupContact");
+        valid = false;
+      } else {
+        markValid("signupContact", "wrapSignupContact", true);
+      }
+
+      if (!year) {
+        showError("signupYearErr", "Please select your year");
+        valid = false;
+      }
+
+      if (!branch) {
+        showError("signupBranchErr", "Please select your branch");
+        valid = false;
+      }
+
+      if (!valid) {
+        shakeCard();
+        return;
+      }
+
+      const newUser = {
+        id: Date.now(),
+        name,
+        email,
+        password,
+        contact,
+        year,
+        branch,
+        createdAt: new Date().toISOString(),
+      };
+
+      const users = JSON.parse(localStorage.getItem("users") || "[]");
+      users.push(newUser);
+      localStorage.setItem("users", JSON.stringify(users));
+
+      showToast("Account created successfully.");
+      setTimeout(() => {
+        switchForm("login");
+        document.getElementById("loginEmail").value = email;
+      }, 700);
+    }
+
+    function handleForgotPassword(event) {
+      event.preventDefault();
+      clearAllErrors();
+
+      const email = document.getElementById("forgotEmail").value.trim().toLowerCase();
+      if (!email) {
+        showError("forgotEmailErr", "Please enter your email");
+        markInvalid("forgotEmail");
+        shakeCard();
+        return;
+      }
+
+      if (!findUserByEmail(email)) {
+        showError("forgotEmailErr", "No account found");
+        markInvalid("forgotEmail");
+        shakeCard();
+        return;
+      }
+
+      markValid("forgotEmail", "wrapForgotEmail", true);
+      showToast("Reset link sent.");
+      setTimeout(() => {
+        switchForm("login");
+        document.getElementById("forgotEmail").value = "";
+      }, 700);
+    }
+
+    window.addEventListener("load", () => {
+      const remembered = localStorage.getItem("rememberMe");
+      if (remembered) {
+        document.getElementById("loginEmail").value = remembered;
+      }
+    });
+  </script>
+</body>
+</html>

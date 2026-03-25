@@ -4,6 +4,9 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import SiteFooter from "@/components/layout/SiteFooter";
+import SiteNavbar from "@/components/layout/SiteNavbar";
+import { useScrollReveal } from "@/hooks/use-scroll-reveal";
 import { Search, ExternalLink, Star, Clock, DollarSign, Filter, BookOpen, Video, FileText } from "lucide-react";
 
 interface Resource {
@@ -22,6 +25,7 @@ interface Resource {
 }
 
 const ResourceLibrary = () => {
+  useScrollReveal();
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [selectedType, setSelectedType] = useState("all");
@@ -116,10 +120,10 @@ const ResourceLibrary = () => {
 
   const filteredResources = resources.filter(resource => {
     const matchesSearch = resource.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         resource.tags.some(tag => tag.toLowerCase().includes(searchTerm.toLowerCase()));
+      resource.tags.some(tag => tag.toLowerCase().includes(searchTerm.toLowerCase()));
     const matchesType = selectedType === "all" || resource.type === selectedType;
     const matchesPrice = selectedPrice === "all" || resource.price === selectedPrice;
-    
+
     return matchesSearch && matchesType && matchesPrice;
   });
 
@@ -135,21 +139,23 @@ const ResourceLibrary = () => {
 
   const getLevelColor = (level: Resource["level"]) => {
     switch (level) {
-      case "beginner": return "bg-green-500/20 text-green-400 border-green-500/30";
-      case "intermediate": return "bg-yellow-500/20 text-yellow-400 border-yellow-500/30";
-      case "advanced": return "bg-red-500/20 text-red-400 border-red-500/30";
+      case "beginner": return "bg-primary/15 text-primary border-primary/30";
+      case "intermediate": return "bg-[var(--primary-light)]/35 text-[var(--text-dark)] border-[var(--primary-light)]";
+      case "advanced": return "bg-[#D2C4B4]/60 text-[var(--text-dark)] border-[#D2C4B4]";
       default: return "bg-muted/20 text-muted-foreground border-muted/30";
     }
   };
 
   return (
     <div className="min-h-screen bg-background">
+      <SiteNavbar />
+
       {/* Header */}
-      <div className="border-b border-border/50 bg-glass backdrop-blur-sm">
+      <div className="section-white border-b border-border/50 bg-glass backdrop-blur-sm">
         <div className="container mx-auto px-4 py-6">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-3xl font-bold bg-gradient-primary bg-clip-text text-transparent">
+              <h1 className="font-display text-3xl font-bold text-[var(--primary)]">
                 Resource Library
               </h1>
               <p className="text-muted-foreground mt-2">Curated learning materials for your career path</p>
@@ -181,7 +187,7 @@ const ResourceLibrary = () => {
                   className="pl-10"
                 />
               </div>
-              
+
               <Select value={selectedType} onValueChange={setSelectedType}>
                 <SelectTrigger>
                   <SelectValue placeholder="All Types" />
@@ -230,7 +236,7 @@ const ResourceLibrary = () => {
                     </Badge>
                   </div>
                   <div className="flex items-center gap-1">
-                    <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
+                    <Star className="h-4 w-4 fill-[var(--primary-light)] text-[var(--primary)]" />
                     <span className="text-sm font-medium">{resource.rating}</span>
                   </div>
                 </div>
@@ -239,7 +245,7 @@ const ResourceLibrary = () => {
                 </CardTitle>
                 <p className="text-sm text-muted-foreground">by {resource.provider}</p>
               </CardHeader>
-              
+
               <CardContent className="space-y-4">
                 <p className="text-sm text-muted-foreground line-clamp-2">
                   {resource.description}
@@ -266,9 +272,8 @@ const ResourceLibrary = () => {
                 <div className="flex items-center justify-between pt-2">
                   <div className="flex items-center gap-2">
                     <DollarSign className="h-4 w-4 text-muted-foreground" />
-                    <span className={`text-sm font-medium ${
-                      resource.price === "free" ? "text-green-400" : "text-muted-foreground"
-                    }`}>
+                    <span className={`text-sm font-medium ${resource.price === "free" ? "text-primary" : "text-muted-foreground"
+                      }`}>
                       {resource.price === "free" ? "Free" : "Paid"}
                     </span>
                     {resource.certification && (
@@ -277,7 +282,7 @@ const ResourceLibrary = () => {
                       </Badge>
                     )}
                   </div>
-                  <Button size="sm" className="bg-gradient-primary hover:opacity-90">
+                  <Button size="sm" className="bg-[var(--primary)] hover:bg-[var(--primary-light)]">
                     <ExternalLink className="h-3 w-3 mr-1" />
                     Access
                   </Button>
@@ -297,6 +302,8 @@ const ResourceLibrary = () => {
           </Card>
         )}
       </div>
+
+      <SiteFooter />
     </div>
   );
 };

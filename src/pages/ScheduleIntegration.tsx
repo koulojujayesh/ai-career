@@ -3,6 +3,9 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import SiteFooter from "@/components/layout/SiteFooter";
+import SiteNavbar from "@/components/layout/SiteNavbar";
+import { useScrollReveal } from "@/hooks/use-scroll-reveal";
 import { Calendar, Clock, Zap, BookOpen, CheckCircle, Plus } from "lucide-react";
 
 interface ScheduleEvent {
@@ -15,8 +18,9 @@ interface ScheduleEvent {
 }
 
 const ScheduleIntegration = () => {
+  useScrollReveal();
   const [selectedPlan, setSelectedPlan] = useState<"intensive" | "extended">("intensive");
-  
+
   const scheduleData = {
     intensive: {
       title: "2-Week Intensive",
@@ -69,17 +73,19 @@ const ScheduleIntegration = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      <SiteNavbar />
+
       {/* Header */}
-      <div className="border-b border-border/50 bg-glass backdrop-blur-sm">
+      <div className="section-white border-b border-border/50 bg-glass backdrop-blur-sm">
         <div className="container mx-auto px-4 py-6">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-3xl font-bold bg-gradient-primary bg-clip-text text-transparent">
+              <h1 className="font-display text-3xl font-bold text-[var(--primary)]">
                 Schedule Integration
               </h1>
               <p className="text-muted-foreground mt-2">Optimize your learning schedule</p>
             </div>
-            <Button className="bg-gradient-primary hover:opacity-90">
+            <Button className="bg-[var(--primary)] hover:bg-[var(--primary-light)]">
               <Plus className="mr-2 h-4 w-4" />
               Sync Calendar
             </Button>
@@ -106,7 +112,7 @@ const ScheduleIntegration = () => {
               <CardHeader>
                 <CardTitle className="flex items-center justify-between">
                   <span>{scheduleData.intensive.title}</span>
-                  <Badge className="bg-gradient-primary">
+                  <Badge className="bg-[var(--primary)] text-white">
                     {scheduleData.intensive.dailyHours}
                   </Badge>
                 </CardTitle>
@@ -120,7 +126,7 @@ const ScheduleIntegration = () => {
               <CardHeader>
                 <CardTitle className="flex items-center justify-between">
                   <span>{scheduleData.extended.title}</span>
-                  <Badge className="bg-gradient-secondary">
+                  <Badge className="bg-[var(--primary-light)] text-[var(--text-dark)]">
                     {scheduleData.extended.dailyHours}
                   </Badge>
                 </CardTitle>
@@ -163,20 +169,18 @@ const ScheduleIntegration = () => {
                   {index < currentSchedule.schedule.length - 1 && (
                     <div className="absolute left-6 top-12 w-0.5 h-8 bg-border/30" />
                   )}
-                  
-                  <div className={`flex items-center gap-4 p-4 rounded-lg border transition-all duration-200 hover:shadow-soft ${
-                    session.completed ? 'bg-primary/5 border-primary/20' : 'bg-card/50 border-border/50'
-                  }`}>
-                    <div className={`flex items-center justify-center w-12 h-12 rounded-full ${
-                      session.completed ? 'bg-primary/20 text-primary' : 'bg-muted/50 text-muted-foreground'
+
+                  <div className={`flex items-center gap-4 p-4 rounded-lg border transition-all duration-200 hover:shadow-soft ${session.completed ? 'bg-primary/5 border-primary/20' : 'bg-card/50 border-border/50'
                     }`}>
+                    <div className={`flex items-center justify-center w-12 h-12 rounded-full ${session.completed ? 'bg-primary/20 text-primary' : 'bg-muted/50 text-muted-foreground'
+                      }`}>
                       {session.completed ? (
                         <CheckCircle className="h-5 w-5" />
                       ) : (
                         getTypeIcon(session.type)
                       )}
                     </div>
-                    
+
                     <div className="flex-1">
                       <div className="flex items-center justify-between mb-1">
                         <h3 className={`font-medium ${session.completed ? 'line-through text-muted-foreground' : ''}`}>
@@ -194,7 +198,7 @@ const ScheduleIntegration = () => {
                         <span>{session.duration}</span>
                       </div>
                     </div>
-                    
+
                     {!session.completed && (
                       <Button variant="outline" size="sm">
                         Start
@@ -216,7 +220,7 @@ const ScheduleIntegration = () => {
               <p className="text-sm text-muted-foreground">Sync with your existing calendar</p>
             </CardContent>
           </Card>
-          
+
           <Card className="bg-gradient-glass border-border/50 hover:shadow-medium transition-shadow cursor-pointer">
             <CardContent className="p-6 text-center">
               <Clock className="h-12 w-12 text-secondary mx-auto mb-4" />
@@ -224,7 +228,7 @@ const ScheduleIntegration = () => {
               <p className="text-sm text-muted-foreground">Never miss a study session</p>
             </CardContent>
           </Card>
-          
+
           <Card className="bg-gradient-glass border-border/50 hover:shadow-medium transition-shadow cursor-pointer">
             <CardContent className="p-6 text-center">
               <Zap className="h-12 w-12 text-accent mx-auto mb-4" />
@@ -234,6 +238,8 @@ const ScheduleIntegration = () => {
           </Card>
         </div>
       </div>
+
+      <SiteFooter />
     </div>
   );
 };

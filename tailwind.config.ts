@@ -20,13 +20,13 @@ export default {
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
         primary: {
-          DEFAULT: "hsl(var(--primary))",
+          DEFAULT: "hsl(var(--primary-hsl))",
           foreground: "hsl(var(--primary-foreground))",
           dark: "hsl(var(--primary-dark))",
-          light: "hsl(var(--primary-light))",
+          light: "hsl(var(--primary-light-hsl))",
         },
         secondary: {
-          DEFAULT: "hsl(var(--secondary))",
+          DEFAULT: "hsl(var(--secondary-hsl))",
           foreground: "hsl(var(--secondary-foreground))",
           dark: "hsl(var(--secondary-dark))",
           light: "hsl(var(--secondary-light))",
@@ -40,7 +40,7 @@ export default {
           foreground: "hsl(var(--muted-foreground))",
         },
         accent: {
-          DEFAULT: "hsl(var(--accent))",
+          DEFAULT: "hsl(var(--accent-hsl))",
           foreground: "hsl(var(--accent-foreground))",
         },
         popover: {
@@ -54,7 +54,7 @@ export default {
         },
         glass: "hsl(var(--glass))",
         success: {
-          DEFAULT: "hsl(var(--success))", 
+          DEFAULT: "hsl(var(--success))",
           foreground: "hsl(var(--success-foreground))",
         },
         warning: {
@@ -138,7 +138,7 @@ export default {
           },
           "50%": {
             opacity: "0.8",
-            boxShadow: "0 0 60px hsla(240, 80%, 60%, 0.4)"
+            boxShadow: "0 0 60px rgba(107, 154, 184, 0.45)"
           }
         },
         "float": {
