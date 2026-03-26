@@ -8,7 +8,8 @@ import { Badge } from "@/components/ui/badge";
 import SiteFooter from "@/components/layout/SiteFooter";
 import SiteNavbar from "@/components/layout/SiteNavbar";
 import { useScrollReveal } from "@/hooks/use-scroll-reveal";
-import { Send, Bot, User, Lightbulb, BookOpen, Target, Zap } from "lucide-react";
+import { Send, Bot, User, Lightbulb, BookOpen, Target, Zap, CalendarDays } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 interface Message {
   id: number;
@@ -30,6 +31,7 @@ const AITutorChat = () => {
     }
   ]);
   const [inputMessage, setInputMessage] = useState("");
+  const navigate = useNavigate();
 
   const quickActions = [
     { id: 1, text: "Explain neural networks", icon: Lightbulb, type: "concept" },
@@ -138,6 +140,14 @@ const AITutorChat = () => {
               <p className="text-muted-foreground">Your personal learning companion</p>
             </div>
             <div className="flex items-center gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => navigate("/schedule")}
+              >
+                Schedule
+                <CalendarDays className="ml-2 h-4 w-4" />
+              </Button>
               <Badge variant="outline" className="bg-primary/15 text-primary border-primary/30">
                 Online
               </Badge>
@@ -196,8 +206,8 @@ const AITutorChat = () => {
                         </Avatar>
                         <div
                           className={`max-w-[85%] rounded-lg p-4 ${message.sender === "user"
-                              ? "bg-primary text-primary-foreground ml-auto"
-                              : `bg-card/80 ${getMessageTypeColor(message.type)}`
+                            ? "bg-primary text-primary-foreground ml-auto"
+                            : `bg-card/80 ${getMessageTypeColor(message.type)}`
                             }`}
                         >
                           {message.sender === "ai" && message.type && (

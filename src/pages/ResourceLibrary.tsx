@@ -43,7 +43,7 @@ const ResourceLibrary = () => {
       level: "beginner",
       tags: ["Python", "ML", "Statistics"],
       description: "Comprehensive introduction to machine learning with hands-on projects",
-      url: "https://coursera.org/ml",
+      url: "https://www.coursera.org/specializations/machine-learning-introduction",
       certification: true
     },
     {
@@ -56,8 +56,8 @@ const ResourceLibrary = () => {
       duration: "25 hours",
       level: "beginner",
       tags: ["Python", "Data Science", "Pandas"],
-      description: "Learn Python programming with focus on data analysis and visualization",
-      url: "https://udemy.com/python-ds",
+      description: "Learn Python programming with a focus on data analysis and visualization.",
+      url: "https://www.udemy.com/course/python-for-data-science-and-machine-learning-bootcamp/",
       certification: true
     },
     {
@@ -70,8 +70,8 @@ const ResourceLibrary = () => {
       duration: "8 hours",
       level: "intermediate",
       tags: ["PyTorch", "Deep Learning", "Neural Networks"],
-      description: "Free comprehensive tutorial series on deep learning fundamentals",
-      url: "https://youtube.com/pytorch",
+      description: "Free tutorial series that teaches deep learning fundamentals with PyTorch.",
+      url: "https://www.youtube.com/results?search_query=deep+learning+with+pytorch+full+course",
       certification: false
     },
     {
@@ -84,8 +84,8 @@ const ResourceLibrary = () => {
       duration: "~40 hours",
       level: "intermediate",
       tags: ["ML", "Scikit-learn", "TensorFlow"],
-      description: "Practical guide to machine learning with real-world examples",
-      url: "https://oreilly.com/ml-book",
+      description: "Practical guide to machine learning with real-world examples.",
+      url: "https://www.oreilly.com/library/view/hands-on-machine-learning/9781492032632/",
       certification: false
     },
     {
@@ -98,8 +98,8 @@ const ResourceLibrary = () => {
       duration: "2 hours",
       level: "beginner",
       tags: ["Statistics", "R", "Theory"],
-      description: "Free comprehensive textbook on statistical learning methods",
-      url: "https://stanford.edu/isl",
+      description: "Free textbook that explains statistical learning methods clearly.",
+      url: "https://www.statlearning.com/",
       certification: false
     },
     {
@@ -112,8 +112,8 @@ const ResourceLibrary = () => {
       duration: "4 months",
       level: "advanced",
       tags: ["TensorFlow", "Certification", "Deep Learning"],
-      description: "Official TensorFlow certification program with real-world projects",
-      url: "https://tensorflow.org/certificate",
+      description: "Official TensorFlow certification preparation resources and exam guidance.",
+      url: "https://www.tensorflow.org/certificate",
       certification: true
     }
   ];
@@ -282,7 +282,11 @@ const ResourceLibrary = () => {
                       </Badge>
                     )}
                   </div>
-                  <Button size="sm" className="bg-[var(--primary)] hover:bg-[var(--primary-light)]">
+                  <Button
+                    size="sm"
+                    className="bg-[var(--primary)] hover:bg-[var(--primary-light)]"
+                    onClick={() => window.open(resource.url, "_blank", "noopener,noreferrer")}
+                  >
                     <ExternalLink className="h-3 w-3 mr-1" />
                     Access
                   </Button>

@@ -7,7 +7,7 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import SiteFooter from "@/components/layout/SiteFooter";
 import SiteNavbar from "@/components/layout/SiteNavbar";
 import { useScrollReveal } from "@/hooks/use-scroll-reveal";
-import { Send, Bot, User, ArrowRight, TrendingUp, Target } from "lucide-react";
+import { Send, Bot, User, ArrowRight, TrendingUp, Target, CalendarDays } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 interface Message {
@@ -84,13 +84,22 @@ const CareerConsultation = () => {
               </h1>
               <p className="text-muted-foreground">Discover your ideal career path with AI guidance</p>
             </div>
-            <Button
-              onClick={() => navigate("/roadmap")}
-              className="bg-[var(--primary)] hover:bg-[var(--primary-light)]"
-            >
-              Generate Roadmap
-              <ArrowRight className="ml-2 h-4 w-4" />
-            </Button>
+            <div className="flex items-center gap-2">
+              <Button
+                variant="outline"
+                onClick={() => navigate("/schedule")}
+              >
+                Schedule
+                <CalendarDays className="ml-2 h-4 w-4" />
+              </Button>
+              <Button
+                onClick={() => navigate("/roadmap")}
+                className="bg-[var(--primary)] hover:bg-[var(--primary-light)]"
+              >
+                Generate Roadmap
+                <ArrowRight className="ml-2 h-4 w-4" />
+              </Button>
+            </div>
           </div>
         </div>
       </div>
@@ -157,8 +166,8 @@ const CareerConsultation = () => {
                     </Avatar>
                     <div
                       className={`max-w-[80%] rounded-lg p-3 ${message.sender === "user"
-                          ? "bg-primary text-primary-foreground ml-auto"
-                          : "bg-muted"
+                        ? "bg-primary text-primary-foreground ml-auto"
+                        : "bg-muted"
                         }`}
                     >
                       <p className="text-sm">{message.text}</p>
