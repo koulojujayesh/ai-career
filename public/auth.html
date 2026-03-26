@@ -1,5 +1,6 @@
 ﻿<!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -340,6 +341,7 @@
         opacity: 0;
         transform: scale(0.97);
       }
+
       to {
         opacity: 1;
         transform: scale(1);
@@ -347,14 +349,17 @@
     }
 
     @keyframes shake {
+
       0%,
       100% {
         transform: translateX(0);
       }
+
       20%,
       60% {
         transform: translateX(-6px);
       }
+
       40%,
       80% {
         transform: translateX(6px);
@@ -366,6 +371,7 @@
         opacity: 0;
         transform: translateY(8px);
       }
+
       to {
         opacity: 1;
         transform: translateY(0);
@@ -387,6 +393,7 @@
     }
   </style>
 </head>
+
 <body>
   <main class="auth-page">
     <section id="authCard" class="auth-card">
@@ -403,7 +410,7 @@
         <button id="tabSignup" class="tab" onclick="switchForm('signup', event)">Sign Up</button>
       </div>
 
-      <form id="loginForm" class="auth-form active" onsubmit="handleLogin(event)">
+      <form id="loginForm" class="auth-form active" onsubmit="return false;">
         <div class="field-group">
           <label for="loginEmail">Email Address</label>
           <div class="input-wrap" id="wrapLoginEmail">
@@ -427,7 +434,7 @@
           <a class="forgot-link" onclick="switchForm('forgot', event)">Forgot password?</a>
         </div>
 
-        <button type="submit" class="btn-primary">Sign In</button>
+        <button type="button" id="loginBtn" class="btn-primary" onclick="handleLogin()">Sign In</button>
 
         <div class="divider">
           <div class="divider-line"></div>
@@ -443,7 +450,7 @@
         <p class="switch-link">Don't have an account? <a onclick="switchForm('signup', event)">Sign up</a></p>
       </form>
 
-      <form id="signupForm" class="auth-form" onsubmit="handleSignup(event)">
+      <form id="signupForm" class="auth-form" onsubmit="return false;">
         <div class="field-group">
           <label for="signupName">Full Name</label>
           <div class="input-wrap" id="wrapSignupName">
@@ -506,7 +513,7 @@
           <div id="signupBranchErr" class="error"></div>
         </div>
 
-        <button type="submit" class="btn-primary">Create Account</button>
+        <button type="button" id="signupBtn" class="btn-primary" onclick="handleSignup()">Create Account</button>
 
         <div class="divider">
           <div class="divider-line"></div>
@@ -522,7 +529,7 @@
         <p class="switch-link">Already have an account? <a onclick="switchForm('login', event)">Sign in</a></p>
       </form>
 
-      <form id="forgotForm" class="auth-form" onsubmit="handleForgotPassword(event)">
+      <form id="forgotForm" class="auth-form" onsubmit="return false;">
         <div class="field-group">
           <label for="forgotEmail">Email Address</label>
           <div class="input-wrap" id="wrapForgotEmail">
@@ -535,7 +542,8 @@
         <p class="subheading" style="text-align:left;margin-bottom:16px;">We'll send a reset link to your email.</p>
 
         <button type="submit" class="btn-primary">Send Reset Link</button>
-        <button type="button" class="btn-secondary" style="margin-top:10px;" onclick="switchForm('login', event)">Back to Login</button>
+        <button type="button" class="btn-secondary" style="margin-top:10px;" onclick="switchForm('login', event)">Back
+          to Login</button>
       </form>
     </section>
   </main>
@@ -626,7 +634,7 @@
     }
 
     function handleLogin(event) {
-      event.preventDefault();
+      if (event) event.preventDefault();
       clearAllErrors();
 
       const email = document.getElementById("loginEmail").value.trim().toLowerCase();
@@ -682,7 +690,7 @@
     }
 
     function handleSignup(event) {
-      event.preventDefault();
+      if (event) event.preventDefault();
       clearAllErrors();
 
       const name = document.getElementById("signupName").value.trim();
@@ -768,7 +776,7 @@
     }
 
     function handleForgotPassword(event) {
-      event.preventDefault();
+      if (event) event.preventDefault();
       clearAllErrors();
 
       const email = document.getElementById("forgotEmail").value.trim().toLowerCase();
@@ -794,6 +802,39 @@
       }, 700);
     }
 
+    document.addEventListener("DOMContentLoaded", () => {
+      document.querySelectorAll("form").forEach((f) => {
+        f.addEventListener("submit", function (e) {
+          e.preventDefault();
+          e.stopPropagation();
+          return false;
+        });
+      });
+
+      document.getElementById("loginEmail")?.addEventListener("keydown", function (e) {
+        if (e.key === "Enter") {
+          e.preventDefault();
+          handleLogin();
+        }
+      });
+
+      document.getElementById("loginPassword")?.addEventListener("keydown", function (e) {
+        if (e.key === "Enter") {
+          e.preventDefault();
+          handleLogin();
+        }
+      });
+
+      ["signupName", "signupEmail", "signupPassword", "signupContact", "signupYear", "signupBranch"].forEach((id) => {
+        document.getElementById(id)?.addEventListener("keydown", function (e) {
+          if (e.key === "Enter") {
+            e.preventDefault();
+            handleSignup();
+          }
+        });
+      });
+    });
+
     window.addEventListener("load", () => {
       const remembered = localStorage.getItem("rememberMe");
       if (remembered) {
@@ -802,4 +843,5 @@
     });
   </script>
 </body>
+
 </html>
