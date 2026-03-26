@@ -8,8 +8,14 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import SiteFooter from "@/components/layout/SiteFooter";
 import SiteNavbar from "@/components/layout/SiteNavbar";
 import { useScrollReveal } from "@/hooks/use-scroll-reveal";
-import { CheckCircle, Circle, Clock, Star, ArrowRight, Calendar, BarChart3, TrendingUp, BookOpen, Zap, RefreshCw, Settings, ExternalLink } from "lucide-react";
+import { CheckCircle, Circle, Clock, Star, ArrowRight, Calendar, BarChart3, TrendingUp, BookOpen, Zap, Settings, ExternalLink, Check } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+
+interface Task {
+  id: number;
+  title: string;
+  completed: boolean;
+}
 
 interface Milestone {
   id: number;
@@ -21,6 +27,7 @@ interface Milestone {
   progress: number;
   level: "foundation" | "intermediate" | "advanced" | "certification";
   prerequisites?: string[];
+  tasks: Task[];
 }
 
 interface SkillData {
@@ -42,168 +49,285 @@ interface Resource {
   category: string;
 }
 
+// Define roadmaps outside component to use in state
+const roadmapsData = {
+  "web-dev": {
+    title: "Full Stack Web Development",
+    subtitle: "Master modern web technologies from frontend to backend",
+    totalDuration: "4 months",
+    milestones: [
+      {
+        id: 1,
+        title: "Web Development Fundamentals",
+        description: "Learn the core technologies that power the modern web",
+        duration: "4-6 weeks",
+        skills: ["HTML5", "CSS3", "JavaScript ES6+", "Git & GitHub", "Responsive Design"],
+        completed: false,
+        progress: 85,
+        level: "foundation" as const,
+        prerequisites: [],
+        tasks: [
+          { id: 1, title: "Learn HTML5 semantic elements", completed: true },
+          { id: 2, title: "Master CSS3 flexbox and grid", completed: true },
+          { id: 3, title: "Complete JavaScript fundamentals course", completed: true },
+          { id: 4, title: "Set up Git and GitHub repository", completed: true },
+          { id: 5, title: "Build and style first responsive website", completed: false },
+        ]
+      },
+      {
+        id: 2,
+        title: "Frontend Framework Mastery",
+        description: "Build dynamic user interfaces with modern frameworks",
+        duration: "6-8 weeks",
+        skills: ["React.js", "State Management", "Component Architecture", "API Integration", "Testing"],
+        completed: false,
+        progress: 60,
+        level: "intermediate" as const,
+        prerequisites: ["Web Development Fundamentals"],
+        tasks: [
+          { id: 6, title: "Understand React components and JSX", completed: true },
+          { id: 7, title: "Master React hooks (useState, useEffect)", completed: true },
+          { id: 8, title: "Learn state management patterns", completed: false },
+          { id: 9, title: "Build API integration in React", completed: false },
+          { id: 10, title: "Write unit and integration tests", completed: false },
+        ]
+      },
+      {
+        id: 3,
+        title: "Backend Development",
+        description: "Create robust server-side applications and APIs",
+        duration: "8-10 weeks",
+        skills: ["Node.js", "Express.js", "Database Design", "Authentication", "API Development"],
+        completed: false,
+        progress: 30,
+        level: "advanced" as const,
+        prerequisites: ["Frontend Framework Mastery"],
+        tasks: [
+          { id: 11, title: "Learn Node.js and npm ecosystem", completed: true },
+          { id: 12, title: "Build REST APIs with Express.js", completed: false },
+          { id: 13, title: "Design database schemas", completed: false },
+          { id: 14, title: "Implement authentication and authorization", completed: false },
+          { id: 15, title: "Deploy backend application", completed: false },
+        ]
+      },
+      {
+        id: 4,
+        title: "Professional Portfolio & Deployment",
+        description: "Showcase your skills and deploy production applications",
+        duration: "4-6 weeks",
+        skills: ["Portfolio Development", "Cloud Deployment", "DevOps Basics", "Performance Optimization"],
+        completed: false,
+        progress: 0,
+        level: "certification" as const,
+        prerequisites: ["Backend Development"],
+        tasks: [
+          { id: 16, title: "Create professional portfolio website", completed: false },
+          { id: 17, title: "Deploy to cloud platform (AWS/Heroku)", completed: false },
+          { id: 18, title: "Set up CI/CD pipeline", completed: false },
+          { id: 19, title: "Optimize performance metrics", completed: false },
+        ]
+      }
+    ]
+  },
+  "ai-ml": {
+    title: "AI & Machine Learning Engineer",
+    subtitle: "Master artificial intelligence and machine learning technologies",
+    totalDuration: "8-10 months",
+    milestones: [
+      {
+        id: 1,
+        title: "Foundation Phase",
+        description: "Master programming fundamentals and mathematical concepts",
+        duration: "2 months",
+        skills: ["Python", "Statistics", "Linear Algebra", "Git"],
+        completed: true,
+        progress: 100,
+        level: "foundation" as const,
+        tasks: [
+          { id: 20, title: "Master Python fundamentals", completed: true },
+          { id: 21, title: "Learn statistics and probability", completed: true },
+          { id: 22, title: "Understand linear algebra concepts", completed: true },
+          { id: 23, title: "Practice with coding challenges", completed: true },
+        ]
+      },
+      {
+        id: 2,
+        title: "Intermediate Phase",
+        description: "Dive into machine learning algorithms and data manipulation",
+        duration: "3 months",
+        skills: ["Pandas", "NumPy", "Scikit-learn", "Data Visualization"],
+        completed: false,
+        progress: 65,
+        level: "intermediate" as const,
+        tasks: [
+          { id: 24, title: "Learn NumPy for numerical computing", completed: true },
+          { id: 25, title: "Master Pandas for data manipulation", completed: true },
+          { id: 26, title: "Study machine learning algorithms", completed: false },
+          { id: 27, title: "Build classification models", completed: false },
+        ]
+      },
+      {
+        id: 3,
+        title: "Advanced Phase",
+        description: "Deep learning, neural networks, and advanced techniques",
+        duration: "2-3 months",
+        skills: ["TensorFlow", "PyTorch", "Deep Learning", "Computer Vision"],
+        completed: false,
+        progress: 20,
+        level: "advanced" as const,
+        tasks: [
+          { id: 28, title: "Learn neural network fundamentals", completed: true },
+          { id: 29, title: "Build models with TensorFlow", completed: false },
+          { id: 30, title: "Master computer vision techniques", completed: false },
+          { id: 31, title: "Deploy deep learning models", completed: false },
+        ]
+      },
+      {
+        id: 4,
+        title: "Specialization & Certification",
+        description: "Choose specialization and complete certification projects",
+        duration: "1-2 months",
+        skills: ["MLOps", "Cloud Deployment", "Portfolio Projects", "Certification"],
+        completed: false,
+        progress: 0,
+        level: "certification" as const,
+        tasks: [
+          { id: 32, title: "Complete capstone project", completed: false },
+          { id: 33, title: "Deploy ML model to production", completed: false },
+          { id: 34, title: "Document and present project", completed: false },
+          { id: 35, title: "Obtain certification", completed: false },
+        ]
+      }
+    ]
+  }
+};
+
+const skillsDataDefault: SkillData[] = [
+  { name: "HTML/CSS", beginner: 0, intermediate: 0, expert: 85 },
+  { name: "JavaScript", beginner: 0, intermediate: 15, expert: 75 },
+  { name: "React", beginner: 40, intermediate: 55, expert: 0 },
+  { name: "Node.js", beginner: 70, intermediate: 25, expert: 0 },
+  { name: "Database", beginner: 75, intermediate: 20, expert: 0 },
+  { name: "DevOps", beginner: 85, intermediate: 15, expert: 0 }
+];
+
+const resourcesDefault: Resource[] = [
+  {
+    id: 1,
+    title: "JavaScript Fundamentals Course",
+    provider: "YouTube",
+    type: "course",
+    price: "free",
+    rating: 4.8,
+    duration: "8 hours",
+    image: "/api/placeholder/300/200",
+    category: "Programming"
+  },
+  {
+    id: 2,
+    title: "React Complete Developer Course",
+    provider: "Udemy",
+    type: "course",
+    price: "paid",
+    rating: 4.9,
+    duration: "40 hours",
+    image: "/api/placeholder/300/200",
+    category: "Frontend"
+  },
+  {
+    id: 3,
+    title: "AWS Cloud Practitioner",
+    provider: "Coursera",
+    type: "course",
+    price: "paid",
+    rating: 4.7,
+    duration: "25 hours",
+    image: "/api/placeholder/300/200",
+    category: "Cloud"
+  }
+];
+
+const getInitialCompletedTaskIds = (): Set<number> => {
+  const ids = new Set<number>();
+
+  Object.values(roadmapsData).forEach((roadmap) => {
+    roadmap.milestones.forEach((milestone) => {
+      milestone.tasks.forEach((task) => {
+        if (task.completed) {
+          ids.add(task.id);
+        }
+      });
+    });
+  });
+
+  return ids;
+};
+
 const RoadmapGeneration = () => {
   useScrollReveal();
   const navigate = useNavigate();
   const [selectedPath, setSelectedPath] = useState("web-dev");
   const [selectedPlan, setSelectedPlan] = useState<"intensive" | "extended">("intensive");
+  const [showTimetable, setShowTimetable] = useState(false);
+  const [expandedMilestones, setExpandedMilestones] = useState<number[]>([]);
+  const [completedTasks, setCompletedTasks] = useState<Set<number>>(getInitialCompletedTaskIds);
 
-  const roadmaps = {
-    "web-dev": {
-      title: "Full Stack Web Development",
-      subtitle: "Master modern web technologies from frontend to backend",
-      totalDuration: "4 months",
-      milestones: [
-        {
-          id: 1,
-          title: "Web Development Fundamentals",
-          description: "Learn the core technologies that power the modern web",
-          duration: "4-6 weeks",
-          skills: ["HTML5", "CSS3", "JavaScript ES6+", "Git & GitHub", "Responsive Design"],
-          completed: false,
-          progress: 85,
-          level: "foundation" as const,
-          prerequisites: []
-        },
-        {
-          id: 2,
-          title: "Frontend Framework Mastery",
-          description: "Build dynamic user interfaces with modern frameworks",
-          duration: "6-8 weeks",
-          skills: ["React.js", "State Management", "Component Architecture", "API Integration", "Testing"],
-          completed: false,
-          progress: 60,
-          level: "intermediate" as const,
-          prerequisites: ["Web Development Fundamentals"]
-        },
-        {
-          id: 3,
-          title: "Backend Development",
-          description: "Create robust server-side applications and APIs",
-          duration: "8-10 weeks",
-          skills: ["Node.js", "Express.js", "Database Design", "Authentication", "API Development"],
-          completed: false,
-          progress: 30,
-          level: "advanced" as const,
-          prerequisites: ["Frontend Framework Mastery"]
-        },
-        {
-          id: 4,
-          title: "Professional Portfolio & Deployment",
-          description: "Showcase your skills and deploy production applications",
-          duration: "4-6 weeks",
-          skills: ["Portfolio Development", "Cloud Deployment", "DevOps Basics", "Performance Optimization"],
-          completed: false,
-          progress: 0,
-          level: "certification" as const,
-          prerequisites: ["Backend Development"]
-        }
-      ]
-    },
-    "ai-ml": {
-      title: "AI & Machine Learning Engineer",
-      subtitle: "Master artificial intelligence and machine learning technologies",
-      totalDuration: "8-10 months",
-      milestones: [
-        {
-          id: 1,
-          title: "Foundation Phase",
-          description: "Master programming fundamentals and mathematical concepts",
-          duration: "2 months",
-          skills: ["Python", "Statistics", "Linear Algebra", "Git"],
-          completed: true,
-          progress: 100,
-          level: "foundation" as const
-        },
-        {
-          id: 2,
-          title: "Intermediate Phase",
-          description: "Dive into machine learning algorithms and data manipulation",
-          duration: "3 months",
-          skills: ["Pandas", "NumPy", "Scikit-learn", "Data Visualization"],
-          completed: false,
-          progress: 65,
-          level: "intermediate" as const
-        },
-        {
-          id: 3,
-          title: "Advanced Phase",
-          description: "Deep learning, neural networks, and advanced techniques",
-          duration: "2-3 months",
-          skills: ["TensorFlow", "PyTorch", "Deep Learning", "Computer Vision"],
-          completed: false,
-          progress: 20,
-          level: "advanced" as const
-        },
-        {
-          id: 4,
-          title: "Specialization & Certification",
-          description: "Choose specialization and complete certification projects",
-          duration: "1-2 months",
-          skills: ["MLOps", "Cloud Deployment", "Portfolio Projects", "Certification"],
-          completed: false,
-          progress: 0,
-          level: "certification" as const
-        }
-      ]
-    }
+  const currentRoadmap = roadmapsData[selectedPath as keyof typeof roadmapsData];
+
+  // Toggle milestone expansion
+  const toggleMilestoneExpansion = (milestoneId: number) => {
+    setExpandedMilestones(prev =>
+      prev.includes(milestoneId)
+        ? prev.filter(id => id !== milestoneId)
+        : [...prev, milestoneId]
+    );
   };
 
-  const skillsData: SkillData[] = [
-    { name: "HTML/CSS", beginner: 0, intermediate: 0, expert: 85 },
-    { name: "JavaScript", beginner: 0, intermediate: 15, expert: 75 },
-    { name: "React", beginner: 40, intermediate: 55, expert: 0 },
-    { name: "Node.js", beginner: 70, intermediate: 25, expert: 0 },
-    { name: "Database", beginner: 75, intermediate: 20, expert: 0 },
-    { name: "DevOps", beginner: 85, intermediate: 15, expert: 0 }
-  ];
+  // Toggle task completion
+  const toggleTaskCompletion = (taskId: number) => {
+    setCompletedTasks(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(taskId)) {
+        newSet.delete(taskId);
+      } else {
+        newSet.add(taskId);
+      }
+      return newSet;
+    });
+  };
 
-  const resources: Resource[] = [
-    {
-      id: 1,
-      title: "JavaScript Fundamentals Course",
-      provider: "YouTube",
-      type: "course",
-      price: "free",
-      rating: 4.8,
-      duration: "8 hours",
-      image: "/api/placeholder/300/200",
-      category: "Programming"
-    },
-    {
-      id: 2,
-      title: "React Complete Developer Course",
-      provider: "Udemy",
-      type: "course",
-      price: "paid",
-      rating: 4.9,
-      duration: "40 hours",
-      image: "/api/placeholder/300/200",
-      category: "Frontend"
-    },
-    {
-      id: 3,
-      title: "AWS Cloud Practitioner",
-      provider: "Coursera",
-      type: "course",
-      price: "paid",
-      rating: 4.7,
-      duration: "25 hours",
-      image: "/api/placeholder/300/200",
-      category: "Cloud"
-    }
-  ];
+  const toggleMilestoneCompletion = (milestone: Milestone) => {
+    setCompletedTasks(prev => {
+      const newSet = new Set(prev);
+      const allCompleted = milestone.tasks.every((task) => newSet.has(task.id));
 
-  const currentRoadmap = roadmaps[selectedPath as keyof typeof roadmaps];
+      milestone.tasks.forEach((task) => {
+        if (allCompleted) {
+          newSet.delete(task.id);
+        } else {
+          newSet.add(task.id);
+        }
+      });
+
+      return newSet;
+    });
+  };
+
+  // Calculate progress for a milestone based on completed tasks
+  const getMilestoneProgress = (milestone: Milestone): number => {
+    if (milestone.tasks.length === 0) return milestone.progress;
+    const completedTasksInMilestone = milestone.tasks.filter(task => completedTasks.has(task.id)).length;
+    return Math.round((completedTasksInMilestone / milestone.tasks.length) * 100);
+  };
 
   // Calculate overall progress
   let totalProgress = 0;
   currentRoadmap.milestones.forEach(milestone => {
-    totalProgress += milestone.progress;
+    totalProgress += getMilestoneProgress(milestone);
   });
   const overallProgress = totalProgress / currentRoadmap.milestones.length;
 
-  const completedMilestones = currentRoadmap.milestones.filter(m => m.completed).length;
+  const completedMilestones = currentRoadmap.milestones.filter(m => getMilestoneProgress(m) === 100).length;
 
   const getLevelColor = (level: string) => {
     switch (level) {
@@ -222,6 +346,7 @@ const RoadmapGeneration = () => {
         subtitle: "Fast-track learning with intensive daily sessions",
         duration: "14 days",
         hours: "4-6 hours",
+        flexibility: "Low",
         features: ["Accelerated timeline", "Daily 4-6 hours", "Quick certification", "High intensity"],
         color: "text-[var(--primary)]"
       };
@@ -231,10 +356,13 @@ const RoadmapGeneration = () => {
       subtitle: "Balanced learning with sustainable pace",
       duration: "3-6 months",
       hours: "1-2 hours",
+      flexibility: "High",
       features: ["Flexible schedule", "Daily 1-2 hours", "Deep understanding", "Moderate intensity"],
       color: "text-[var(--primary)]"
     };
   };
+
+  const selectedPlanInfo = getPlanInfo(selectedPlan);
 
   // Simple skill mastery chart component
   const SkillMasteryChart = ({ data }: { data: SkillData[] }) => (
@@ -280,19 +408,13 @@ const RoadmapGeneration = () => {
               </h1>
               <p className="text-muted-foreground mt-1">Create your personalized learning roadmap</p>
             </div>
-            <div className="flex gap-2">
-              <Button variant="outline" className="flex items-center gap-2">
-                <RefreshCw className="h-4 w-4" />
-                Regenerate
-              </Button>
-              <Button
-                onClick={() => navigate("/schedule")}
-                className="bg-[var(--primary)] hover:bg-[var(--primary-light)]"
-              >
-                <Calendar className="mr-2 h-4 w-4" />
-                Integrate Schedule
-              </Button>
-            </div>
+            <Button
+              onClick={() => navigate("/schedule")}
+              className="bg-[var(--primary)] hover:bg-[var(--primary-light)]"
+            >
+              <Calendar className="mr-2 h-4 w-4" />
+              Integrate Schedule
+            </Button>
           </div>
 
           {/* Progress Steps */}
@@ -340,7 +462,7 @@ const RoadmapGeneration = () => {
             </CardTitle>
             <p className="text-muted-foreground">Choose your learning pace and timeline</p>
             <div className="flex items-center justify-between">
-              <span className="text-sm text-muted-foreground">0/4 Milestones</span>
+              <span className="text-sm text-muted-foreground">{completedMilestones}/4 Milestones</span>
               <span className="text-sm text-muted-foreground">12 weeks remaining</span>
             </div>
           </CardHeader>
@@ -349,8 +471,8 @@ const RoadmapGeneration = () => {
               {/* Intensive Plan */}
               <div
                 className={`border rounded-lg p-6 cursor-pointer transition-all ${selectedPlan === "intensive"
-                    ? "border-primary/50 bg-primary/5"
-                    : "border-border/50 hover:border-border"
+                  ? "border-primary/50 bg-primary/5"
+                  : "border-border/50 hover:border-border"
                   }`}
                 onClick={() => setSelectedPlan("intensive")}
               >
@@ -365,8 +487,8 @@ const RoadmapGeneration = () => {
                     </div>
                   </div>
                   <div className={`w-4 h-4 rounded-full border-2 ${selectedPlan === "intensive"
-                      ? "border-primary bg-primary"
-                      : "border-muted-foreground"
+                    ? "border-primary bg-primary"
+                    : "border-muted-foreground"
                     }`} />
                 </div>
                 <p className="text-sm text-muted-foreground mb-4">
@@ -388,8 +510,8 @@ const RoadmapGeneration = () => {
               {/* Extended Plan */}
               <div
                 className={`border rounded-lg p-6 cursor-pointer transition-all ${selectedPlan === "extended"
-                    ? "border-[var(--primary-light)] bg-[var(--primary-light)]/20"
-                    : "border-border/50 hover:border-border"
+                  ? "border-[var(--primary-light)] bg-[var(--primary-light)]/20"
+                  : "border-border/50 hover:border-border"
                   }`}
                 onClick={() => setSelectedPlan("extended")}
               >
@@ -404,8 +526,8 @@ const RoadmapGeneration = () => {
                     </div>
                   </div>
                   <div className={`w-4 h-4 rounded-full border-2 ${selectedPlan === "extended"
-                      ? "border-primary bg-primary"
-                      : "border-muted-foreground"
+                    ? "border-primary bg-primary"
+                    : "border-muted-foreground"
                     }`} />
                 </div>
                 <p className="text-sm text-muted-foreground mb-4">
@@ -434,21 +556,26 @@ const RoadmapGeneration = () => {
               <div className="grid grid-cols-3 gap-8 text-center">
                 <div>
                   <p className="text-sm text-muted-foreground mb-1">Daily Time</p>
-                  <p className="font-semibold">1-2 hours</p>
+                  <p className="font-semibold">{selectedPlanInfo.hours}</p>
                 </div>
                 <div>
                   <p className="text-sm text-muted-foreground mb-1">Completion</p>
-                  <p className="font-semibold">3-6 months</p>
+                  <p className="font-semibold">{selectedPlanInfo.duration}</p>
                 </div>
                 <div>
                   <p className="text-sm text-muted-foreground mb-1">Flexibility</p>
-                  <p className="font-semibold">High</p>
+                  <p className="font-semibold">{selectedPlanInfo.flexibility}</p>
                 </div>
               </div>
             </div>
 
             <div className="flex gap-3 mt-6">
-              <Button variant="outline">Switch Plan</Button>
+              <Button
+                variant="outline"
+                onClick={() => setSelectedPlan(selectedPlan === "intensive" ? "extended" : "intensive")}
+              >
+                Switch Plan
+              </Button>
               <Button
                 onClick={() => navigate("/schedule")}
                 className="bg-[var(--primary)] hover:bg-[var(--primary-light)]"
@@ -468,98 +595,237 @@ const RoadmapGeneration = () => {
                   <Calendar className="h-5 w-5 text-primary" />
                   Learning Timeline
                 </CardTitle>
-                <Button variant="outline" size="sm" className="w-fit">
-                  Show Timetable
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="w-fit"
+                  onClick={() => setShowTimetable(!showTimetable)}
+                >
+                  {showTimetable ? "Hide" : "Show"} Timetable
                 </Button>
               </CardHeader>
               <CardContent>
+                {showTimetable && (
+                  <div className="mb-6 p-4 bg-muted/20 rounded-lg">
+                    <h4 className="font-semibold mb-4">Weekly Timetable ({selectedPlan === "intensive" ? "Intensive - 2 Weeks" : "Extended - 3-6 Months"})</h4>
+                    <div className="overflow-x-auto">
+                      <table className="w-full text-sm">
+                        <thead>
+                          <tr className="border-b border-border/50">
+                            <th className="text-left py-2">Time</th>
+                            <th className="text-left py-2">Mon-Fri</th>
+                            <th className="text-left py-2">Saturday</th>
+                            <th className="text-left py-2">Sunday</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {selectedPlan === "intensive" ? (
+                            <>
+                              <tr className="border-b border-border/50">
+                                <td className="py-2">09:00 - 11:00</td>
+                                <td className="py-2">Lecture</td>
+                                <td className="py-2">Project</td>
+                                <td className="py-2">Review</td>
+                              </tr>
+                              <tr className="border-b border-border/50">
+                                <td className="py-2">11:00 - 12:30</td>
+                                <td className="py-2">Practice</td>
+                                <td className="py-2">Practice</td>
+                                <td className="py-2">Rest</td>
+                              </tr>
+                              <tr className="border-b border-border/50">
+                                <td className="py-2">13:30 - 15:30</td>
+                                <td className="py-2">Lab Work</td>
+                                <td className="py-2">Lab Work</td>
+                                <td className="py-2">Rest</td>
+                              </tr>
+                              <tr>
+                                <td className="py-2">16:00 - 17:00</td>
+                                <td className="py-2">Assignment</td>
+                                <td className="py-2">Quiz</td>
+                                <td className="py-2">Rest</td>
+                              </tr>
+                            </>
+                          ) : (
+                            <>
+                              <tr className="border-b border-border/50">
+                                <td className="py-2">07:00 - 08:00</td>
+                                <td className="py-2">Study</td>
+                                <td className="py-2">Off</td>
+                                <td className="py-2">Off</td>
+                              </tr>
+                              <tr className="border-b border-border/50">
+                                <td className="py-2">19:00 - 20:00</td>
+                                <td className="py-2">Practice</td>
+                                <td className="py-2">Project</td>
+                                <td className="py-2">Project</td>
+                              </tr>
+                              <tr>
+                                <td className="py-2">20:00 - 21:00</td>
+                                <td className="py-2">Review</td>
+                                <td className="py-2">Review</td>
+                                <td className="py-2">Review</td>
+                              </tr>
+                            </>
+                          )}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                )}
                 <div className="space-y-6">
-                  {currentRoadmap.milestones.map((milestone, index) => (
-                    <div key={milestone.id} className="relative">
-                      {/* Timeline connector */}
-                      {index < currentRoadmap.milestones.length - 1 && (
-                        <div className="absolute left-6 top-16 w-0.5 h-16 bg-border/30" />
-                      )}
+                  {currentRoadmap.milestones.map((milestone, index) => {
+                    const milestoneProgress = getMilestoneProgress(milestone);
+                    const isMilestoneExpanded = expandedMilestones.includes(milestone.id);
+                    const milestoneCompleted = milestoneProgress === 100;
 
-                      <div className={`border rounded-lg p-6 transition-all duration-300 hover:shadow-soft ${milestone.completed ? 'bg-primary/5 border-primary/20' : 'bg-card/50 border-border/50'
-                        }`}>
-                        <div className="flex items-start gap-4">
-                          <div className={`mt-1 ${milestone.completed ? 'text-primary' : 'text-muted-foreground'}`}>
-                            {milestone.completed ? (
-                              <CheckCircle className="h-6 w-6" />
-                            ) : (
-                              <Circle className="h-6 w-6" />
-                            )}
-                          </div>
+                    return (
+                      <div key={milestone.id} className="relative">
+                        {/* Timeline connector */}
+                        {index < currentRoadmap.milestones.length - 1 && (
+                          <div className="absolute left-6 top-16 w-0.5 h-16 bg-border/30" />
+                        )}
 
-                          <div className="flex-1">
-                            <div className="flex items-center justify-between mb-2">
-                              <div>
-                                <Badge className={getLevelColor(milestone.level)}>
-                                  {milestone.level}
-                                </Badge>
-                                <h3 className="text-lg font-semibold mt-2">{milestone.title}</h3>
-                              </div>
-                              <Badge variant="outline" className="flex items-center gap-1">
-                                <Clock className="h-3 w-3" />
-                                {milestone.duration}
-                              </Badge>
-                            </div>
+                        <div className={`border rounded-lg p-6 transition-all duration-300 hover:shadow-soft ${milestoneCompleted ? 'bg-primary/5 border-primary/20' : 'bg-card/50 border-border/50'
+                          }`}>
+                          <div className="flex items-start gap-4">
+                            <button
+                              type="button"
+                              aria-label={milestoneCompleted ? "Mark milestone incomplete" : "Mark milestone complete"}
+                              className={`mt-1 transition-colors ${milestoneCompleted ? 'text-primary hover:text-primary/80' : 'text-muted-foreground hover:text-primary'}`}
+                              onClick={() => toggleMilestoneCompletion(milestone)}
+                            >
+                              {milestoneCompleted ? (
+                                <CheckCircle className="h-6 w-6" />
+                              ) : (
+                                <Circle className="h-6 w-6" />
+                              )}
+                            </button>
 
-                            <p className="text-muted-foreground mb-4">{milestone.description}</p>
-
-                            {/* Skills to Learn */}
-                            <div className="mb-4">
-                              <h4 className="font-medium mb-2 flex items-center gap-2">
-                                <Star className="h-4 w-4 text-accent" />
-                                Skills to Learn
-                              </h4>
-                              <div className="flex flex-wrap gap-2">
-                                {milestone.skills.map((skill) => (
-                                  <Badge key={skill} variant="secondary" className="bg-[var(--primary-light)]/35 text-[var(--text-dark)]">
-                                    {skill}
+                            <div className="flex-1">
+                              <div className="flex items-center justify-between mb-2">
+                                <div>
+                                  <Badge className={getLevelColor(milestone.level)}>
+                                    {milestone.level}
                                   </Badge>
-                                ))}
+                                  <h3 className="text-lg font-semibold mt-2">{milestone.title}</h3>
+                                </div>
+                                <Badge variant="outline" className="flex items-center gap-1">
+                                  <Clock className="h-3 w-3" />
+                                  {milestone.duration}
+                                </Badge>
                               </div>
-                            </div>
 
-                            {/* Progress */}
-                            <div className="mb-4">
-                              <div className="flex justify-between items-center mb-2">
-                                <span className="text-sm font-medium">Progress</span>
-                                <span className="text-sm text-muted-foreground">{milestone.progress}%</span>
-                              </div>
-                              <Progress value={milestone.progress} className="h-2" />
-                            </div>
+                              <p className="text-muted-foreground mb-4">{milestone.description}</p>
 
-                            {/* Prerequisites */}
-                            {milestone.prerequisites && milestone.prerequisites.length > 0 && (
+                              {/* Skills to Learn */}
                               <div className="mb-4">
-                                <p className="text-sm text-muted-foreground">
-                                  <strong>1 prereq</strong>
-                                </p>
+                                <h4 className="font-medium mb-2 flex items-center gap-2">
+                                  <Star className="h-4 w-4 text-accent" />
+                                  Skills to Learn
+                                </h4>
+                                <div className="flex flex-wrap gap-2">
+                                  {milestone.skills.map((skill) => (
+                                    <Badge key={skill} variant="secondary" className="bg-[var(--primary-light)]/35 text-[var(--text-dark)]">
+                                      {skill}
+                                    </Badge>
+                                  ))}
+                                </div>
                               </div>
-                            )}
 
-                            {/* Action button */}
-                            <div className="flex gap-2">
-                              {!milestone.completed && milestone.progress > 0 && (
-                                <Button variant="outline" size="sm">
-                                  Continue Learning
-                                </Button>
+                              {/* Progress */}
+                              <div className="mb-4">
+                                <div className="flex justify-between items-center mb-2">
+                                  <span className="text-sm font-medium">Progress</span>
+                                  <span className="text-sm text-muted-foreground">{milestoneProgress}%</span>
+                                </div>
+                                <Progress value={milestoneProgress} className="h-2" />
+                              </div>
+
+                              {/* Tasks Checklist */}
+                              {milestone.tasks && milestone.tasks.length > 0 && (
+                                <div className="mb-4 p-3 bg-muted/10 rounded-lg">
+                                  <button
+                                    onClick={() => toggleMilestoneExpansion(milestone.id)}
+                                    className="flex items-center gap-2 w-full text-left font-medium text-sm hover:text-primary transition-colors"
+                                  >
+                                    <ChevronIcon isExpanded={isMilestoneExpanded} />
+                                    Checklist ({milestone.tasks.filter(t => completedTasks.has(t.id)).length}/{milestone.tasks.length})
+                                  </button>
+
+                                  {isMilestoneExpanded && (
+                                    <div className="mt-3 space-y-2">
+                                      {milestone.tasks.map((task) => {
+                                        const isTaskCompleted = completedTasks.has(task.id);
+                                        return (
+                                          <div
+                                            key={task.id}
+                                            className="flex items-center gap-3 p-2 hover:bg-muted/20 rounded transition-colors cursor-pointer"
+                                            onClick={() => toggleTaskCompletion(task.id)}
+                                          >
+                                            <div className={`flex-shrink-0 w-5 h-5 rounded border-2 flex items-center justify-center transition-colors ${isTaskCompleted
+                                              ? 'bg-primary border-primary'
+                                              : 'border-muted-foreground hover:border-primary'
+                                              }`}>
+                                              {isTaskCompleted && <Check className="h-3 w-3 text-white" />}
+                                            </div>
+                                            <span className={`text-sm ${isTaskCompleted ? 'line-through text-muted-foreground' : 'text-foreground'}`}>
+                                              {task.title}
+                                            </span>
+                                          </div>
+                                        );
+                                      })}
+                                    </div>
+                                  )}
+                                </div>
                               )}
-                              {!milestone.completed && milestone.progress === 0 && (
-                                <Button size="sm" className="bg-[var(--primary)] hover:bg-[var(--primary-light)]">
-                                  Start Learning
-                                  <ExternalLink className="ml-2 h-3 w-3" />
-                                </Button>
+
+                              {/* Prerequisites */}
+                              {milestone.prerequisites && milestone.prerequisites.length > 0 && (
+                                <div className="mb-4">
+                                  <p className="text-sm text-muted-foreground">
+                                    <strong>1 prereq</strong>
+                                  </p>
+                                </div>
                               )}
+
+                              {/* Action button */}
+                              <div className="flex gap-2">
+                                {!milestoneCompleted && milestoneProgress > 0 && (
+                                  <Button
+                                    variant="outline"
+                                    size="sm"
+                                    onClick={() => navigate("/resources")}
+                                  >
+                                    Continue Learning
+                                  </Button>
+                                )}
+                                {!milestoneCompleted && milestoneProgress === 0 && (
+                                  <Button
+                                    size="sm"
+                                    className="bg-[var(--primary)] hover:bg-[var(--primary-light)]"
+                                    onClick={() => navigate("/resources")}
+                                  >
+                                    Start Learning
+                                    <ExternalLink className="ml-2 h-3 w-3" />
+                                  </Button>
+                                )}
+                                {milestoneCompleted && (
+                                  <Button
+                                    variant="outline"
+                                    size="sm"
+                                    disabled
+                                  >
+                                    ✓ Completed
+                                  </Button>
+                                )}
+                              </div>
                             </div>
                           </div>
                         </div>
                       </div>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               </CardContent>
             </Card>
@@ -594,7 +860,7 @@ const RoadmapGeneration = () => {
                     </div>
                   </div>
 
-                  <SkillMasteryChart data={skillsData} />
+                  <SkillMasteryChart data={skillsDataDefault} />
                 </div>
               </CardContent>
             </Card>
@@ -615,7 +881,7 @@ const RoadmapGeneration = () => {
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
-                  {resources.slice(0, 3).map((resource) => (
+                  {resourcesDefault.slice(0, 3).map((resource) => (
                     <div key={resource.id} className="flex items-center gap-3 p-3 border border-border/50 rounded-lg hover:bg-muted/20 transition-colors">
                       <div className="w-12 h-12 bg-muted/50 rounded-lg flex items-center justify-center">
                         <BookOpen className="h-5 w-5 text-muted-foreground" />
@@ -658,8 +924,8 @@ const RoadmapGeneration = () => {
             onClick={() => navigate("/schedule")}
             className="bg-[var(--primary)] hover:bg-[var(--primary-light)] flex-1"
           >
-            <Calendar className="mr-2 h-5 w-5" />
-            Integrate with Schedule
+            <Calendar className="mr-2 h-4 w-4" />
+            Create Schedule
           </Button>
           <Button
             size="lg"
@@ -667,15 +933,8 @@ const RoadmapGeneration = () => {
             onClick={() => navigate("/resources")}
             className="flex-1"
           >
-            Export Roadmap
-          </Button>
-          <Button
-            size="lg"
-            variant="outline"
-            onClick={() => navigate("/ai-tutor")}
-            className="flex-1"
-          >
-            Get AI Tutor Help
+            Explore Resources
+            <ArrowRight className="ml-2 h-4 w-4" />
           </Button>
         </div>
       </div>
@@ -684,5 +943,17 @@ const RoadmapGeneration = () => {
     </div>
   );
 };
+
+// Chevron icon component
+const ChevronIcon = ({ isExpanded }: { isExpanded: boolean }) => (
+  <svg
+    className={`h-4 w-4 transition-transform ${isExpanded ? 'rotate-90' : ''}`}
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"
+  >
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+  </svg>
+);
 
 export default RoadmapGeneration;
