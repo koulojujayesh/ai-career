@@ -78,72 +78,59 @@ const Index = () => {
                     />
                 ))}
 
-                <div className="mx-auto flex w-full max-w-[1500px] items-center px-5 sm:px-8 lg:px-10">
-                    <div className="grid w-full items-center gap-10 md:grid-cols-2">
-                        <div>
-                            <Badge
-                                className="hero-stagger mb-6 rounded-full border border-[rgba(107,154,184,0.4)] bg-[rgba(107,154,184,0.15)] px-4 py-2 text-[var(--primary-light)] backdrop-blur-md"
-                                style={{ ["--delay" as string]: "0s" }}
-                            >
-                                <Sparkles className="mr-2 h-4 w-4" />
-                                AI-Powered Career Intelligence
-                            </Badge>
+                <div className="mx-auto flex w-full max-w-6xl items-center justify-center px-5 sm:px-8 lg:px-10">
+                    <div className="w-full text-center">
+                        <Badge
+                            className="hero-stagger mb-6 inline-flex rounded-full border border-[rgba(107,154,184,0.4)] bg-[rgba(107,154,184,0.15)] px-4 py-2 text-[var(--primary-light)] backdrop-blur-md"
+                            style={{ ["--delay" as string]: "0s" }}
+                        >
+                            <Sparkles className="mr-2 h-4 w-4" />
+                            AI-Powered Career Intelligence
+                        </Badge>
 
-                            <h1
-                                className="hero-stagger font-display mb-4 text-[clamp(3rem,7vw,6rem)] font-extrabold leading-tight"
-                                style={{
-                                    ["--delay" as string]: "0.15s",
-                                    background: "linear-gradient(135deg, #F2E4D4 0%, #6B9AB8 60%, #A8CEDC 100%)",
-                                    WebkitBackgroundClip: "text",
-                                    WebkitTextFillColor: "transparent",
-                                }}
-                            >
-                                CareerPath AI
-                            </h1>
+                        <h1
+                            className="hero-stagger font-display mb-6 text-[clamp(2.5rem,8vw,5.5rem)] font-extrabold leading-tight"
+                            style={{
+                                ["--delay" as string]: "0.15s",
+                                background: "linear-gradient(135deg, #F2E4D4 0%, #6B9AB8 60%, #A8CEDC 100%)",
+                                WebkitBackgroundClip: "text",
+                                WebkitTextFillColor: "transparent",
+                            }}
+                        >
+                            CareerPath AI
+                        </h1>
 
-                            <p className="hero-stagger mb-4 text-xl text-[var(--text-secondary)] md:text-2xl" style={{ ["--delay" as string]: "0.3s" }}>
-                                Personalized Roadmaps. Future-Proof Careers.
-                            </p>
+                        <p className="hero-stagger mb-4 text-2xl font-semibold text-[var(--text-secondary)]" style={{ ["--delay" as string]: "0.3s" }}>
+                            Personalized Roadmaps. Future-Proof Careers.
+                        </p>
 
-                            <p className="hero-stagger mb-8 max-w-xl text-lg text-[var(--text-muted)]" style={{ ["--delay" as string]: "0.45s" }}>
-                                Transform your career journey with intelligent skill development, predictive market insights,
-                                and personalized learning paths powered by advanced AI.
-                            </p>
+                        <p className="hero-stagger mx-auto mb-10 max-w-2xl text-lg text-[var(--text-muted)] leading-relaxed" style={{ ["--delay" as string]: "0.45s" }}>
+                            Transform your career journey with intelligent skill development, predictive market insights,
+                            and personalized learning paths powered by advanced AI.
+                        </p>
 
-                            <div className="hero-stagger mb-10 flex flex-col gap-4 sm:flex-row" style={{ ["--delay" as string]: "0.6s" }}>
-                                <Button size="lg" onClick={() => navigate("/register")} className="text-lg px-8 py-6">
-                                    Get Started
-                                    <ArrowRight className="ml-2 h-5 w-5" />
-                                </Button>
-                                <Button size="lg" variant="outline" onClick={() => navigate("/career-consultation")} className="text-lg px-8 py-6">
-                                    Free Consultation
-                                </Button>
-                            </div>
-
-                            <div className="hero-stagger grid max-w-xl grid-cols-1 gap-4 sm:grid-cols-2" style={{ ["--delay" as string]: "0.75s" }}>
-                                {stats.map((stat, index) => (
-                                    <div
-                                        key={stat.label}
-                                        className={`flex items-center gap-3 text-[var(--text-secondary)] ${index > 0 ? "sm:border-l sm:border-[var(--border-color)] sm:pl-4" : ""}`}
-                                    >
-                                        <stat.icon className="h-4 w-4 text-[var(--primary)]" />
-                                        <span className="text-base">
-                                            {stat.value} {stat.label}
-                                        </span>
-                                    </div>
-                                ))}
-                            </div>
+                        <div className="hero-stagger mb-12 flex flex-col gap-4 justify-center sm:flex-row" style={{ ["--delay" as string]: "0.6s" }}>
+                            <Button size="lg" onClick={() => navigate("/register")} className="text-base px-8 py-6 font-semibold">
+                                Get Started
+                                <ArrowRight className="ml-2 h-5 w-5" />
+                            </Button>
+                            <Button size="lg" variant="outline" onClick={() => navigate("/career-consultation")} className="text-base px-8 py-6 font-semibold">
+                                Free Consultation
+                            </Button>
                         </div>
 
-                        <div className="hidden reveal md:flex md:items-center md:justify-center">
-                            <div className="flex min-h-[360px] w-full items-center justify-center rounded-[20px] border border-[var(--border-color)] bg-[var(--bg-card)] p-6 shadow-[0_25px_80px_rgba(0,0,0,0.5),inset_0_1px_0_rgba(255,255,255,0.05)] md:min-h-[430px]">
-                                <svg viewBox="0 0 360 360" className="h-[300px] w-[300px] md:h-[330px] md:w-[330px]" role="img" aria-label="Animated career intelligence rings">
-                                    <circle cx="180" cy="180" r="128" className="orbit-dashed" fill="none" stroke="rgba(107,154,184,0.55)" strokeDasharray="6 8" strokeWidth="2" />
-                                    <circle cx="180" cy="180" r="112" className="orb-ring" fill="none" stroke="#6B9AB8" strokeWidth="14" />
-                                    <circle cx="180" cy="180" r="78" className="orb-ring delay-1" fill="none" stroke="#4a7a9b" strokeWidth="14" />
-                                    <circle cx="180" cy="180" r="44" className="orb-ring delay-2" fill="none" stroke="#2d5f80" strokeWidth="14" />
-                                </svg>
-                            </div>
+                        <div className="hero-stagger flex flex-col gap-6 justify-center sm:flex-row sm:gap-8" style={{ ["--delay" as string]: "0.75s" }}>
+                            {stats.map((stat, index) => (
+                                <div
+                                    key={stat.label}
+                                    className="flex items-center justify-center gap-3 text-[var(--text-secondary)]"
+                                >
+                                    <stat.icon className="h-5 w-5 text-[var(--primary)]" />
+                                    <span className="text-lg font-medium">
+                                        {stat.value} {stat.label}
+                                    </span>
+                                </div>
+                            ))}
                         </div>
                     </div>
                 </div>
